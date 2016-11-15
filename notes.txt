@@ -1,0 +1,117 @@
+https://keptenkurk.wordpress.com/2016/03/26/connecting-the-medisana-bs440-bluetooth-scale-part-3/
+http://stackoverflow.com/questions/34271217/solved-connecting-to-a-bluetooth-smart-le-weight-scale-with-bluez-bluetoothctl-g/34559392#34559392
+http://stackoverflow.com/questions/15657007/bluetooth-low-energy-listening-for-notifications-indications-in-linux
+
+Frame 13693: 32 bytes on wire (256 bits), 32 bytes captured (256 bits)
+Bluetooth
+Bluetooth HCI H4
+Bluetooth HCI Event - LE Meta
+    Event Code: LE Meta (0x3e)
+    Parameter Total Length: 29
+    Sub Event: LE Advertising Report (0x02)
+    Num Reports: 1
+    Event Type: Connectable Undirected Advertising (0x00)
+    Peer Address Type: Public Device Address (0x00)
+    BD_ADDR: TexasIns_2a:8d:a6 (f0:c7:7f:2a:8d:a6)
+    Data Length: 17
+    Advertising Data
+        Flags
+            Length: 2
+            Type: Flags (0x01)
+            000. .... = Reserved: 0x0
+            ...0 .... = Simultaneous LE and BR/EDR to Same Device Capable (Host): false (0x0)
+            .... 0... = Simultaneous LE and BR/EDR to Same Device Capable (Controller): false (0x0)
+            .... .1.. = BR/EDR Not Supported: true (0x1)
+            .... ..0. = LE General Discoverable Mode: false (0x0)
+            .... ...1 = LE Limited Discoverable Mode: true (0x1)
+        16-bit Service Class UUIDs (incomplete)
+            Length: 3
+            Type: 16-bit Service Class UUIDs (incomplete) (0x02)
+            UUID 16: Unknown (0xfff0)
+        Manufacturer Specific
+            Length: 9
+            Type: Manufacturer Specific (0xff)
+            Company ID: Ericsson Technology Licensing (0x0000)
+            Data: f0c77f2a8da6
+    RSSI (dB): -60
+
+Frame 13694: 33 bytes on wire (264 bits), 33 bytes captured (264 bits)
+Bluetooth
+Bluetooth HCI H4
+Bluetooth HCI Event - LE Meta
+    Event Code: LE Meta (0x3e)
+    Parameter Total Length: 30
+    Sub Event: LE Advertising Report (0x02)
+    Num Reports: 1
+    Event Type: Scan Response (0x04)
+    Peer Address Type: Public Device Address (0x00)
+    BD_ADDR: TexasIns_2a:8d:a6 (f0:c7:7f:2a:8d:a6)
+    Data Length: 18
+    Advertising Data
+        Device Name: Electronic Scale
+            Length: 17
+            Type: Device Name (0x09)
+            Device Name: Electronic Scale
+    RSSI (dB): -60
+
+Frame 13721: 14 bytes on wire (112 bits), 14 bytes captured (112 bits)
+Bluetooth
+Bluetooth HCI H4
+Bluetooth HCI ACL Packet
+Bluetooth L2CAP Protocol
+Bluetooth Attribute Protocol
+    Opcode: Write Request (0x12)
+        0... .... = Authentication Signature: False
+        .0.. .... = Command: False
+        ..01 0010 = Method: Write Request (0x12)
+    Handle: 0x0015 (Unknown: Unknown: Client Characteristic Configuration)
+        [Service UUID: Unknown (0xfff0)]
+        [Characteristic UUID: Unknown (0xfff4)]
+        [UUID: Client Characteristic Configuration (0x2902)]
+    Characteristic Configuration Client: 0x0001, Notification
+        0000 0000 0000 00.. = Reseved: 0x0000
+        .... .... .... ..0. = Indication: False
+        .... .... .... ...1 = Notification: True
+    [Response in Frame: 13722]
+
+Frame 13722: 10 bytes on wire (80 bits), 10 bytes captured (80 bits)
+Bluetooth
+Bluetooth HCI H4
+Bluetooth HCI ACL Packet
+Bluetooth L2CAP Protocol
+Bluetooth Attribute Protocol
+    Opcode: Write Response (0x13)
+        0... .... = Authentication Signature: False
+        .0.. .... = Command: False
+        ..01 0011 = Method: Write Response (0x13)
+    [Handle: 0x0015 (Unknown: Unknown: Client Characteristic Configuration)]
+        [Service UUID: Unknown (0xfff0)]
+        [Characteristic UUID: Unknown (0xfff4)]
+        [UUID: Client Characteristic Configuration (0x2902)]
+    [Request in Frame: 13721]
+
+Frame 1965: 28 bytes on wire (224 bits), 28 bytes captured (224 bits)
+Bluetooth
+    [Source: TexasIns_2a:8d:a6 (f0:c7:7f:2a:8d:a6)]
+    [Destination: AsustekC_7e:22:04 (50:46:5d:7e:22:04)]
+Bluetooth HCI H4
+Bluetooth HCI ACL Packet
+Bluetooth L2CAP Protocol
+Bluetooth Attribute Protocol
+    Opcode: Handle Value Notification (0x1b)
+    Handle: 0x0014 (Unknown: Unknown)
+    Value: cf01adaa0404015b1e026c1301cd0599
+
+cf01adaa 0414 015e 1c02 7013 01ca059c
+104.4 kg, fat 35%, water 45.8%, muscle 62.4kg, bone 2.8kg
+
+cf01adaa 0406 015b 1e 026d 13 01cd 0599
+103.0 kg, fat 34.7%, water 46.1%, muscle 62.1kg, bone 3.0kg, BMR 1433 kcal
+
+0x0406: 1030  kg
+0x015b: 347 fat
+0x1e: 30 bone
+0x026d: 621 muscle
+0x13: 19 visceral fat
+0x01cd: 461  water
+0x0599: 1433  BMR
