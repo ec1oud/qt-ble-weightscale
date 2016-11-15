@@ -1,6 +1,7 @@
 https://keptenkurk.wordpress.com/2016/03/26/connecting-the-medisana-bs440-bluetooth-scale-part-3/
 http://stackoverflow.com/questions/34271217/solved-connecting-to-a-bluetooth-smart-le-weight-scale-with-bluez-bluetoothctl-g/34559392#34559392
 http://stackoverflow.com/questions/15657007/bluetooth-low-energy-listening-for-notifications-indications-in-linux
+http://www.humbug.in/2014/using-gatttool-manualnon-interactive-mode-read-ble-devices/
 
 Frame 13693: 32 bytes on wire (256 bits), 32 bytes captured (256 bits)
 Bluetooth
