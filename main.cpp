@@ -47,8 +47,12 @@ int main(int argc, char *argv[])
     trayIcon.setContextMenu(&trayIconMenu);
     trayIcon.show();
 
-    QObject::connect(&weightScale, &WeightScale::error, &trayIcon, &TrayIcon::showError);
-    QObject::connect(&weightScale, &WeightScale::statusChanged, &trayIcon, &TrayIcon::showTooltip);
+    QObject::connect(&weightScale, &WeightScale::error,
+                     &trayIcon, &TrayIcon::showError);
+    QObject::connect(&weightScale, &WeightScale::statusChanged,
+                     &trayIcon, &TrayIcon::showTooltip);
+    QObject::connect(&weightScale, SIGNAL(weightUpdated(QString,QString)),
+                     &trayIcon, SLOT(showMessage(QString,QString)));
 
 //    connect(trayIcon, &QSystemTrayIcon::messageClicked, &weightScale, &WeightScale::messageClicked);
 //    connect(trayIcon, &QSystemTrayIcon::activated, &weightScale, &WeightScale::iconActivated);

@@ -221,7 +221,68 @@ void WeightScale::serviceError(QLowEnergyService::ServiceError e)
 void WeightScale::updateBodyComp(const QLowEnergyCharacteristic &c,
                                  const QByteArray &value)
 {
-    qDebug() << c.name() << value.toHex();
-    // TODO: decode it
-    // example cf01adaa0405015a1b02691301cd0599
+    QByteArray hexValue = value.toHex();
+    qDebug() << c.name() << hexValue;
+
+    // example cf01adaa 0405 015a 1b 0269 13 01cd 0599
+    //         not sure, weight, fat, bone, muscle, visceral fat, water, BMR
+    if (hexValue.length() != 32)
+        setStatus(tr("reading has unexpected length"));
+    else {
+        bool ok = false;
+        int val = hexValue.mid(8, 4).toInt(&ok, 16);
+        if (!ok) {
+            setStatus(tr("failed to decode weight reading "));
+            return;
+        }
+        m_weight = val / 10.0;
+
+        val = hexValue.mid(12, 4).toInt(&ok, 16);
+        if (!ok) {
+            setStatus(tr("failed to decode fat reading"));
+            return;
+        }
+        m_fat = val / 10.0;
+
+        val = hexValue.mid(16, 2).toInt(&ok, 16);
+        if (!ok) {
+            setStatus(tr("failed to decode bone mass reading"));
+            return;
+        }
+        m_bone = val / 10.0;
+
+        val = hexValue.mid(18, 4).toInt(&ok, 16);
+        if (!ok) {
+            setStatus(tr("failed to decode muscle mass reading"));
+            return;
+        }
+        m_muscle = val / 10.0;
+
+        val = hexValue.mid(22, 2).toInt(&ok, 16);
+        if (!ok) {
+            setStatus(tr("failed to decode visceral fat reading"));
+            return;
+        }
+        m_vfat = val / 10.0;
+
+        val = hexValue.mid(24, 4).toInt(&ok, 16);
+        if (!ok) {
+            setStatus(tr("failed to decode water reading"));
+            return;
+        }
+        m_water = val / 10.0;
+
+        val = hexValue.mid(28, 4).toInt(&ok, 16);
+        if (!ok) {
+            setStatus(tr("failed to decode BMR reading"));
+            return;
+        }
+        m_bmr = val;
+
+        QString message = tr("%1 %2, %3% fat, %4% water, %5 %2 muscle, %6 %2 bone, BMR %7 kcal")
+                .arg(m_weight).arg(tr("kg")).arg(m_fat).arg(m_water).arg(m_muscle).arg(m_bone).arg(m_bmr);
+
+        setStatus(message);
+        emit weightUpdated(tr("weight"), message);
+    }
 }

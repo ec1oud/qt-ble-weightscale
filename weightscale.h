@@ -59,6 +59,7 @@ private slots:
 signals:
     void error(QString message);
     void statusChanged(QString message);
+    void weightUpdated(QString person, QString message);
 
 private:
     QBluetoothDeviceDiscoveryAgent *m_discoveryAgent;
@@ -68,6 +69,14 @@ private:
     QBluetoothUuid m_serviceUuid;
     QLowEnergyService *m_service;
     QString m_status;
+
+    qreal m_weight;
+    qreal m_fat;
+    qreal m_bone;
+    qreal m_muscle;
+    qreal m_vfat;
+    qreal m_water;
+    int m_bmr;
 };
 
 #endif // WEIGHTSCALE_H
