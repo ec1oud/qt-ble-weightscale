@@ -57,7 +57,8 @@ private slots:
     void serviceError(QLowEnergyService::ServiceError e);
 
 signals:
-    void statusChanged();
+    void error(QString message);
+    void statusChanged(QString message);
 
 private:
     QBluetoothDeviceDiscoveryAgent *m_discoveryAgent;

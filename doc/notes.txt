@@ -116,3 +116,6 @@ cf01adaa 0406 015b 1e 026d 13 01cd 0599
 0x13: 19 visceral fat
 0x01cd: 461  water
 0x0599: 1433  BMR
+
+write to influx db:
+curl -i -POST "http://localhost:8086/write?db=science_is_cool" --data-binary 'weather,location=us-midwest temperature=82 1465839830100400200'

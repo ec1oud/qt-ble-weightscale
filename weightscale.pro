@@ -1,8 +1,14 @@
 TEMPLATE = app
 TARGET = weightscale
 
-QT += widgets bluetooth
+QT += widgets bluetooth svg
 
-HEADERS += weightscale.h
+HEADERS += weightscale.h \
+    trayicon.h
+
 SOURCES += weightscale.cpp \
-           main.cpp
+    main.cpp \
+    trayicon.cpp
+
+RESOURCES += \
+    resources.qrc

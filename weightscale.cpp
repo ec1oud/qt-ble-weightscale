@@ -58,20 +58,27 @@ void WeightScale::addDevice(const QBluetoothDeviceInfo &device)
     }
 }
 
-void WeightScale::deviceScanError(QBluetoothDeviceDiscoveryAgent::Error error)
+void WeightScale::deviceScanError(QBluetoothDeviceDiscoveryAgent::Error e)
 {
-    if (error == QBluetoothDeviceDiscoveryAgent::PoweredOffError)
-        setStatus(tr("bluetooth adaptor is powered off"));
-    else
-        setStatus(tr("device scan error ") + error);
+    switch (e) {
+    case QBluetoothDeviceDiscoveryAgent::PoweredOffError:
+        emit error(tr("Bluetooth adaptor is powered off"));
+        break;
+    case QBluetoothDeviceDiscoveryAgent::InputOutputError:
+        emit error(tr("no Bluetooth adapter or I/O error"));
+        break;
+    default:
+//        emit error(tr("device scan error %1").arg(error));
+        break;
+    }
+    setStatus(tr("device scan error"));
 }
-
 
 void WeightScale::setStatus(QString s)
 {
     qDebug() << s;
     m_status = s;
-    emit statusChanged();
+    emit statusChanged(m_status);
 }
 
 QString WeightScale::status() const
@@ -216,4 +223,5 @@ void WeightScale::updateBodyComp(const QLowEnergyCharacteristic &c,
 {
     qDebug() << c.name() << value.toHex();
     // TODO: decode it
+    // example cf01adaa0405015a1b02691301cd0599
 }
