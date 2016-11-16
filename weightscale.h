@@ -22,6 +22,9 @@
 #include <QBluetoothDeviceInfo>
 #include <QLowEnergyController>
 #include <QLowEnergyService>
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+#include <QNetworkReply>
 
 class WeightScale : public QObject
 {
@@ -56,6 +59,9 @@ private slots:
                               const QByteArray &value);
     void serviceError(QLowEnergyService::ServiceError e);
 
+    void networkFinished();
+    void networkError(QNetworkReply::NetworkError e);
+
 signals:
     void error(QString message);
     void statusChanged(QString message);
@@ -69,6 +75,10 @@ private:
     QBluetoothUuid m_serviceUuid;
     QLowEnergyService *m_service;
     QString m_status;
+
+    QNetworkAccessManager m_nam;
+    QNetworkRequest m_influxInsertReq;
+    QNetworkReply *m_netReply;
 
     qreal m_weight;
     qreal m_fat;

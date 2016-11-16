@@ -17,11 +17,15 @@
 
 #include "weightscale.h"
 #include <QDebug>
+#include <QMetaEnum>
 
 WeightScale::WeightScale() :
-    m_discoveryAgent(nullptr), m_controller(nullptr), m_service(nullptr)
+    m_discoveryAgent(nullptr), m_controller(nullptr), m_service(nullptr),
+    m_influxInsertReq(QUrl("http://localhost:8086/write?db=health")),
+    m_netReply(nullptr)
 {
     m_discoveryAgent = new QBluetoothDeviceDiscoveryAgent(this);
+    m_influxInsertReq.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
 
     connect(m_discoveryAgent, SIGNAL(deviceDiscovered(const QBluetoothDeviceInfo&)),
             this, SLOT(addDevice(const QBluetoothDeviceInfo&)));
@@ -218,6 +222,24 @@ void WeightScale::serviceError(QLowEnergyService::ServiceError e)
     setStatus(tr("service error ") + e);
 }
 
+void WeightScale::networkFinished()
+{
+    qDebug() << "influxDB says: " << m_netReply->readAll();
+    m_netReply->disconnect();
+    m_netReply->deleteLater();
+    m_netReply = nullptr;
+}
+
+void WeightScale::networkError(QNetworkReply::NetworkError e)
+{
+    setStatus(tr("network error ") +
+              m_netReply->metaObject()->enumerator(
+                  m_netReply->metaObject()->indexOfEnumerator("QNetworkReply::NetworkError")).key(e));
+    m_netReply->disconnect();
+    m_netReply->deleteLater();
+    m_netReply = nullptr;
+}
+
 void WeightScale::updateBodyComp(const QLowEnergyCharacteristic &c,
                                  const QByteArray &value)
 {
@@ -284,5 +306,13 @@ void WeightScale::updateBodyComp(const QLowEnergyCharacteristic &c,
 
         setStatus(message);
         emit weightUpdated(tr("weight"), message);
+
+        if (!m_netReply) {
+            QString reqData = QLatin1String("bodycomp,username=%1 weight=%2,unit=\"%3\",fat=%4,water=%5,muscle=%6,bone=%7,bmr=%8,vfat=%9");
+            reqData = reqData.arg("shawn").arg(m_weight).arg(tr("kg")).arg(m_fat).arg(m_water).arg(m_muscle).arg(m_bone).arg(m_bmr).arg(m_vfat);
+            m_netReply = m_nam.post(m_influxInsertReq, reqData.toLatin1());
+            connect(m_netReply, &QNetworkReply::finished, this, &WeightScale::networkFinished);
+            connect(m_netReply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(networkError(QNetworkReply::NetworkError)));
+        }
     }
 }

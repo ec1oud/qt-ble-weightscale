@@ -1,7 +1,7 @@
 TEMPLATE = app
 TARGET = weightscale
 
-QT += widgets bluetooth svg
+QT += widgets bluetooth svg network
 
 HEADERS += weightscale.h \
     trayicon.h
