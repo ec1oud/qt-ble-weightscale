@@ -22,7 +22,7 @@
 WeightScale::WeightScale() :
     m_discoveryAgent(nullptr), m_controller(nullptr), m_service(nullptr),
     m_influxInsertReq(QUrl("http://localhost:8086/write?db=health")),
-    m_netReply(nullptr)
+    m_netReply(nullptr), m_updated(false)
 {
     m_discoveryAgent = new QBluetoothDeviceDiscoveryAgent(this);
     m_influxInsertReq.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
@@ -117,6 +117,7 @@ void WeightScale::connectService()
 
 void WeightScale::deviceConnected()
 {
+    m_updated = false;
     m_controller->discoverServices();
 }
 
@@ -243,6 +244,8 @@ void WeightScale::networkError(QNetworkReply::NetworkError e)
 void WeightScale::updateBodyComp(const QLowEnergyCharacteristic &c,
                                  const QByteArray &value)
 {
+    if (m_updated)
+        return;
     QByteArray hexValue = value.toHex();
     qDebug() << c.name() << hexValue;
 
@@ -306,6 +309,7 @@ void WeightScale::updateBodyComp(const QLowEnergyCharacteristic &c,
 
         setStatus(message);
         emit weightUpdated(tr("weight"), message);
+        m_updated = true;
 
         if (!m_netReply) {
             QString reqData = QLatin1String("bodycomp,username=%1 weight=%2,unit=\"%3\",fat=%4,water=%5,muscle=%6,bone=%7,bmr=%8,vfat=%9");

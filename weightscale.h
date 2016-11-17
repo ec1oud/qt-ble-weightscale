@@ -87,6 +87,7 @@ private:
     qreal m_vfat;
     qreal m_water;
     int m_bmr;
+    bool m_updated;
 };
 
 #endif // WEIGHTSCALE_H
