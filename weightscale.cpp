@@ -17,6 +17,7 @@
 
 #include "weightscale.h"
 #include <QDebug>
+#include <QInputDialog>
 #include <QMetaEnum>
 
 WeightScale::WeightScale() :
@@ -254,6 +255,7 @@ void WeightScale::updateBodyComp(const QLowEnergyCharacteristic &c,
     if (hexValue.length() != 32)
         setStatus(tr("reading has unexpected length"));
     else {
+        // Decode values from the hex string
         bool ok = false;
         int val = hexValue.mid(8, 4).toInt(&ok, 16);
         if (!ok) {
@@ -303,17 +305,41 @@ void WeightScale::updateBodyComp(const QLowEnergyCharacteristic &c,
             return;
         }
         m_bmr = val;
-
-        QString message = tr("%1 %2, %3% fat, %4% water, %5 %2 muscle, %6 %2 bone, BMR %7 kcal")
-                .arg(m_weight).arg(tr("kg")).arg(m_fat).arg(m_water).arg(m_muscle).arg(m_bone).arg(m_bmr);
-
-        setStatus(message);
-        emit weightUpdated(tr("weight"), message);
         m_updated = true;
 
+        // figure out which user this might be
+        m_settings.beginGroup(QLatin1String("UserWeights"));
+        QStringList users = m_settings.childKeys();
+        QString nearestUser;
+        qreal nearestUserDelta = 1000;
+        for (const QString &key : users) {
+            qreal weight = m_settings.value(key).toReal();
+            qreal delta = weight - m_weight;
+            if (qAbs(delta) < qAbs(nearestUserDelta)) {
+                nearestUser = key;
+                nearestUserDelta = delta;
+            }
+        }
+
+        if (users.isEmpty() || nearestUserDelta > 5) {
+            nearestUser = QInputDialog::getText(nullptr, tr("New user?"), tr("user name"));
+        }
+
+        // update user's last-known weight for comparison next time
+        m_settings.setValue(nearestUser, m_weight);
+        m_settings.endGroup();
+
+        // update the UI
+        QString message = tr("%1 %2 (delta %8), %3% fat, %4% water, %5 %2 muscle, %6 %2 bone, BMR %7 kcal")
+                .arg(m_weight).arg(tr("kg")).arg(m_fat).arg(m_water).arg(m_muscle).arg(m_bone).arg(m_bmr).arg(nearestUserDelta);
+
+        setStatus(message);
+        emit weightUpdated(nearestUser, message);
+
+        // update influxDB
         if (!m_netReply) {
             QString reqData = QLatin1String("bodycomp,username=%1 weight=%2,unit=\"%3\",fat=%4,water=%5,muscle=%6,bone=%7,bmr=%8,vfat=%9");
-            reqData = reqData.arg("shawn").arg(m_weight).arg(tr("kg")).arg(m_fat).arg(m_water).arg(m_muscle).arg(m_bone).arg(m_bmr).arg(m_vfat);
+            reqData = reqData.arg(nearestUser).arg(m_weight).arg(tr("kg")).arg(m_fat).arg(m_water).arg(m_muscle).arg(m_bone).arg(m_bmr).arg(m_vfat);
             m_netReply = m_nam.post(m_influxInsertReq, reqData.toLatin1());
             connect(m_netReply, &QNetworkReply::finished, this, &WeightScale::networkFinished);
             connect(m_netReply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(networkError(QNetworkReply::NetworkError)));

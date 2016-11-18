@@ -25,6 +25,7 @@
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
+#include <QSettings>
 
 class WeightScale : public QObject
 {
@@ -75,6 +76,8 @@ private:
     QBluetoothUuid m_serviceUuid;
     QLowEnergyService *m_service;
     QString m_status;
+
+    QSettings m_settings;
 
     QNetworkAccessManager m_nam;
     QNetworkRequest m_influxInsertReq;
