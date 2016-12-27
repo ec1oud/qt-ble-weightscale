@@ -26,6 +26,7 @@ WeightScale::WeightScale() :
     m_netReply(nullptr), m_updated(false)
 {
     m_discoveryAgent = new QBluetoothDeviceDiscoveryAgent(this);
+    m_discoveryAgent->setLowEnergyDiscoveryTimeout(0); // scan forever
     m_influxInsertReq.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
 
     connect(m_discoveryAgent, SIGNAL(deviceDiscovered(const QBluetoothDeviceInfo&)),
@@ -57,7 +58,6 @@ void WeightScale::addDevice(const QBluetoothDeviceInfo &device)
         qDebug() << "discovered device " << device.name() << device.address().toString();
         if (device.name() == QLatin1String("Electronic Scale")) {
             m_device = device;
-            m_discoveryAgent->stop();
             connectService();
         }
     }
