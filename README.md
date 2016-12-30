@@ -9,3 +9,5 @@ https://github.com/influxdata/influxdb
 So far it does not handle other types of scales, but they
 could be added.
 
+Requires Qt 5.8 or newer with extra modules
+qtconnectivity and qtsvg.
