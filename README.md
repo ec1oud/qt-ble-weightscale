@@ -1,3 +1,6 @@
+*This has been renamed to TrayBLE and the work will continue in
+[this repository](https://github.com/ec1oud/trayble)*
+
 A Qt application to show and record readings from the
 [1byOne body composition scale](https://www.amazon.com/dp/B01FHELB56)
 
